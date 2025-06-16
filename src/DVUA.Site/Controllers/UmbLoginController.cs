@@ -188,13 +188,9 @@ public class UmbLoginController : SurfaceController
         {
             ModelState.AddModelError("loginModel", "Member is not allowed");
         }
-        else if (attemptedUser == null)
-        {
-            ModelState.AddModelError("loginModel", "Invalid username");
-        }
         else
         {
-            ModelState.AddModelError("loginModel", "Invalid password");
+            ModelState.AddModelError("loginModel", "Invalid username or password");
         }
 
         return CurrentUmbracoPage();
