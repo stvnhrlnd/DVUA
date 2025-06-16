@@ -1,0 +1,35 @@
+﻿@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Core.Routing
+@using Umbraco.Cms.Web.Common.Models
+@using Umbraco.Cms.Web.Website.Controllers
+@using Umbraco.Extensions
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    var site = Model.Root();
+    var selection = site.Children.Where(x => x.IsVisible());
+    var isLoggedIn = Context.User.GetMemberIdentity()?.IsAuthenticated ?? false;
+}
+@foreach (var item in selection)
+{
+    <a class="nav-link @(item.IsAncestorOrSelf(Model) ? "nav-link--active" : null)" href="@item.Url()">@item.Name</a>
+}
+@if (isLoggedIn)
+{
+    var logoutModel = new PostRedirectModel();
+    // You can modify this to redirect to a different URL instead of the current one
+    logoutModel.RedirectUrl = null;
+    using (Html.BeginUmbracoForm<UmbLoginStatusController>("HandleLogout", new
+    {
+        RedirectUrl = logoutModel.RedirectUrl
+    }))
+    {
+        <button class="nav-link" style="background: none; border: 1px solid;" type="submit" class="btn btn-primary">Log out</button>
+    }
+}
+else
+{
+    var loginActive = Model.ContentType.Alias == "login";
+    var registerActive = Model.ContentType.Alias == "register";
+    <a class="nav-link @(loginActive ? "nav-link--active" : null)" href="/login/">Log in</a>
+    <a class="nav-link @(registerActive ? "nav-link--active" : null)" href="/register/">Register</a>
+}

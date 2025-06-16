@@ -1,0 +1,52 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@using Umbraco.Cms.Core.Security
+@using Umbraco.Cms.Web.Common.Models
+@using Umbraco.Cms.Web.Website.Controllers
+
+@inject IMemberManager memberManager
+
+@{
+    Layout = "master.cshtml";
+
+    var isLoggedIn = Context.User.GetMemberIdentity()?.IsAuthenticated ?? false;
+}
+
+@await Html.PartialAsync("~/Views/Partials/SectionHeader.cshtml")
+
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                @if (isLoggedIn)
+                {
+                    var currentMember = await memberManager.GetCurrentMemberAsync();
+                    var currentMemberRoles = await memberManager.GetRolesAsync(currentMember);
+
+                    var logoutModel = new PostRedirectModel();
+                    // You can modify this to redirect to a different URL instead of the current one
+                    logoutModel.RedirectUrl = null;
+
+                    <p>Welcome back <strong>@Context.User?.GetMemberIdentity()?.Name</strong>!</p>
+
+                    @if (currentMemberRoles.Contains("Premium"))
+                    {
+                        <p><a href="/private/">Access the Premium members area</a></p>
+                    }
+
+                    @using (Html.BeginUmbracoForm<UmbLoginStatusController>("HandleLogout", new
+                    {
+                        RedirectUrl = logoutModel.RedirectUrl
+                    }))
+                    {
+                        <button type="submit" class="btn btn-primary">Log out</button>
+                    }
+                }
+                else
+                {
+                    @await Html.PartialAsync("Partials/Login")
+                }
+            </div>
+        </div>
+    </div>
+</section>
