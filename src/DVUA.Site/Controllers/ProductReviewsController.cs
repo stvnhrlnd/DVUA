@@ -34,7 +34,7 @@ public class ProductReviewsController(
         using var scope = scopeProvider.CreateScope();
 
         var queryResults = scope.Database.Fetch<ProductReviewSchema>(
-            "SELECT * FROM ProductReviews WHERE UmbracoMemberId = '" + memberId + "'");
+            "SELECT * FROM ProductReviews WHERE UmbracoMemberId = @0", memberId);
 
         scope.Complete();
 
