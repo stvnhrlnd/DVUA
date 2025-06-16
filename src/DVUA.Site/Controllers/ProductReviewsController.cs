@@ -45,6 +45,13 @@ public class ProductReviewsController(
     [HttpPut]
     public async Task SubmitReview(ProductReviewRequestDto productReviewRequest)
     {
+        var sanitizer = new HtmlSanitizer();
+        var sanitized = sanitizer.Sanitize(productReviewRequest.Comment);
+        if (!sanitized.Equals(productReviewRequest.Comment))
+        {
+            throw new ArgumentException("Malicious payload detected in product review.");
+        }
+
         using var scope = scopeProvider.CreateScope();
 
         var currentMember = await memberManager.GetCurrentMemberAsync();
