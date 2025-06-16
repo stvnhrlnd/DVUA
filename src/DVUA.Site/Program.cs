@@ -13,7 +13,7 @@ builder.CreateUmbracoBuilder()
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.Cookie.HttpOnly = false;
+    options.Cookie.HttpOnly = true;
 });
 
 WebApplication app = builder.Build();
