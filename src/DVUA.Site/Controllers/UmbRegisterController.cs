@@ -53,6 +53,11 @@ public class UmbRegisterController : SurfaceController
             return CurrentUmbracoPage();
         }
 
+        if (model.RoleName != "Standard")
+        {
+            return BadRequest();
+        }
+
         MergeRouteValuesToModel(model);
 
         IdentityResult result = await RegisterMemberAsync(model);
